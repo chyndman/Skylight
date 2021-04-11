@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2021, Chris Hyndman
+// SPDX-License-Identifier: BSD-3-Clause
+
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
