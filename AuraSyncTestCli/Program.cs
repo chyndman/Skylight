@@ -57,9 +57,9 @@ namespace AuraSyncTestCli
                             break;
                     }
 
-                    var dev = Convert.ToUInt32(match.Groups[2].Value);
-                    var light = Convert.ToUInt32(match.Groups[3].Value);
-                    var addr = new Tuple<uint, uint>(dev, light);
+                    var dev = Convert.ToInt32(match.Groups[2].Value);
+                    var light = Convert.ToInt32(match.Groups[3].Value);
+                    var addr = new Tuple<int, int>(dev, light);
                     var led = hub.GetRgbLed(addr);
 
                     if (null == led)

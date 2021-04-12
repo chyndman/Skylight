@@ -15,7 +15,7 @@ namespace LedControl.Asus
         private IAuraSyncDevice dev;
         private IAuraRgbLight light;
 
-        public AuraSyncRgbLed(IAuraSyncDevice dev, uint lightIdx)
+        public AuraSyncRgbLed(IAuraSyncDevice dev, int lightIdx)
         {
             this.dev = dev;
             light = dev.Lights[(int)lightIdx];

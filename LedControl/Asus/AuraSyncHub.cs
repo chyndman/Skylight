@@ -10,16 +10,16 @@ using AuraServiceLib;
 
 namespace LedControl.Asus
 {
-    public class AuraSyncHub : Hub<Tuple<uint, uint>>
+    public class AuraSyncHub : Hub<Tuple<int, int>>
     {
         private IAuraSdk sdk;
         private IAuraSyncDeviceCollection devs;
-        private Dictionary<Tuple<uint, uint>, AuraSyncRgbLed> rgbLedsCache;
+        private Dictionary<Tuple<int, int>, AuraSyncRgbLed> rgbLedsCache;
 
         public AuraSyncHub()
         {
             sdk = new AuraSdk();
-            rgbLedsCache = new Dictionary<Tuple<uint, uint>, AuraSyncRgbLed>();
+            rgbLedsCache = new Dictionary<Tuple<int, int>, AuraSyncRgbLed>();
         }
 
         public override void Initialize()
@@ -28,28 +28,28 @@ namespace LedControl.Asus
             devs = sdk.Enumerate(0);
         }
 
-        public override Tuple<uint, uint>[] ScanRgbLeds()
+        public override Tuple<int, int>[] ScanRgbLeds()
         {
-            uint count = 0;
+            int count = 0;
             for (int i = 0; i < devs.Count; i++)
             {
-                count += (uint)devs[i].Lights.Count;
+                count += devs[i].Lights.Count;
             }
-            Tuple<uint, uint>[] addrs = new Tuple<uint, uint>[count];
+            Tuple<int, int>[] addrs = new Tuple<int, int>[count];
             
             count = 0;
             for (int i = 0; i < devs.Count; i++)
             {
                 for (int j = 0; j < devs[i].Lights.Count; j++)
                 {
-                    addrs[count++] = new Tuple<uint, uint>((uint)i, (uint)j);
+                    addrs[count++] = new Tuple<int, int>(i, j);
                 }
             }
 
             return addrs;
         }
 
-        public override RgbLed GetRgbLed(Tuple<uint, uint> addr)
+        public override RgbLed GetRgbLed(Tuple<int, int> addr)
         {
             AuraSyncRgbLed led = null;
 
@@ -57,9 +57,9 @@ namespace LedControl.Asus
             {
                 led = rgbLedsCache[addr];
             }
-            else if (addr.Item1 < devs.Count && addr.Item2 < devs[(int)addr.Item1].Lights.Count)
+            else if (addr.Item1 < devs.Count && addr.Item2 < devs[addr.Item1].Lights.Count)
             {
-                led = new AuraSyncRgbLed(devs[(int)addr.Item1], addr.Item2);
+                led = new AuraSyncRgbLed(devs[addr.Item1], addr.Item2);
                 rgbLedsCache.Add(addr, led);
             }
 
