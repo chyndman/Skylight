@@ -12,20 +12,26 @@ namespace LedControl.Asus
 {
     public class AuraSyncHub : Hub<Tuple<int, int>>
     {
-        private IAuraSdk sdk;
+        private IAuraSdk2 sdk;
         private IAuraSyncDeviceCollection devs;
         private Dictionary<Tuple<int, int>, AuraSyncRgbLed> rgbLedsCache;
 
         public AuraSyncHub()
         {
-            sdk = new AuraSdk();
+            sdk = (IAuraSdk2)(new AuraSdk());
             rgbLedsCache = new Dictionary<Tuple<int, int>, AuraSyncRgbLed>();
         }
 
-        public override void Initialize()
+        public override void Activate()
         {
             sdk.SwitchMode();
             devs = sdk.Enumerate(0);
+        }
+
+        public override void Deactivate()
+        {
+            sdk.ReleaseControl(0);
+            devs = null;
         }
 
         public override Tuple<int, int>[] ScanRgbLeds()

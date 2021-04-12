@@ -12,7 +12,7 @@ namespace AuraSyncTestCli
         static void Main(string[] args)
         {
             var hub = new LedControl.Asus.AuraSyncHub();
-            hub.Initialize();
+            hub.Activate();
             var addrs = hub.ScanRgbLeds();
             var black = new Tuple<byte, byte, byte>(0, 0, 0);
 
@@ -72,6 +72,8 @@ namespace AuraSyncTestCli
                     }
                 }
             }
+
+            hub.Deactivate();
         }
     }
 }
