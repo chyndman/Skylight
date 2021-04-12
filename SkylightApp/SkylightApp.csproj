@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LedControl\LedControl.csproj" />
+    <ProjectReference Include="..\SkylightFxEngine\SkylightFxEngine.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

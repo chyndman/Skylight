@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using LedControl;
 
@@ -18,10 +18,17 @@ namespace SkylightApp
         [STAThread]
         static void Main()
         {
+            CancellationTokenSource cts = new CancellationTokenSource();
+            Thread thdFx = new Thread(new ParameterizedThreadStart(SkylightFxEngine.Thread.run));
+            thdFx.Start(cts.Token);
+
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
+
+            cts.Cancel();
+            thdFx.Join();
         }
     }
 }

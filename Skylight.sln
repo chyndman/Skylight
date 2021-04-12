@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkylightApp", "SkylightApp\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LedControl", "LedControl\LedControl.csproj", "{F1640656-7ACB-4C98-8737-745E31FA09AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuraSyncTestCli", "AuraSyncTestCli\AuraSyncTestCli.csproj", "{E85617E4-89EA-4CF1-9FA6-75B404AD0BD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuraSyncTestCli", "AuraSyncTestCli\AuraSyncTestCli.csproj", "{E85617E4-89EA-4CF1-9FA6-75B404AD0BD6}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SkylightFxEngine", "SkylightFxEngine\SkylightFxEngine.fsproj", "{19FAF1E2-2F72-4C30-A6B5-3C28A87C5D3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{E85617E4-89EA-4CF1-9FA6-75B404AD0BD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E85617E4-89EA-4CF1-9FA6-75B404AD0BD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E85617E4-89EA-4CF1-9FA6-75B404AD0BD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19FAF1E2-2F72-4C30-A6B5-3C28A87C5D3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19FAF1E2-2F72-4C30-A6B5-3C28A87C5D3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19FAF1E2-2F72-4C30-A6B5-3C28A87C5D3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19FAF1E2-2F72-4C30-A6B5-3C28A87C5D3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
