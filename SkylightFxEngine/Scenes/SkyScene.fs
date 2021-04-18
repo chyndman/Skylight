@@ -103,6 +103,7 @@ module Demo =
         let setColorByAltitude = sampleColorByAltitude >> setColor
         param.Levels
         |> List.iter (fun (alt, addrs) -> addrs |> List.iter (setColorByAltitude alt))
+        hub.Flush();
         
-        param.FramePeriodMsec    
+        param.FramePeriodMsec
     

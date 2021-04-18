@@ -24,26 +24,22 @@ namespace LedControl.Asus
         protected override void SetRed(byte r)
         {
             light.Red = r;
-            dev.Apply();
         }
 
         protected override void SetGreen(byte g)
         {
             light.Green = g;
-            dev.Apply();
         }
 
         protected override void SetBlue(byte b)
         {
             light.Blue = b;
-            dev.Apply();
         }
 
         protected override void SetAllChannels(byte r, byte g, byte b)
         {
             uint rgb = ((uint)r) | ((uint)g << 8) | ((uint)b << 16);
             light.Color = rgb;
-            dev.Apply();
         }
     }
 }

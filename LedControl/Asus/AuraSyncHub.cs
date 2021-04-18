@@ -71,5 +71,13 @@ namespace LedControl.Asus
 
             return led;
         }
+
+        public override void Flush()
+        {
+            foreach (IAuraSyncDevice dev in devs)
+            {
+                dev.Apply();
+            }
+        }
     }
 }

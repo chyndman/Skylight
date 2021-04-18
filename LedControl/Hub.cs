@@ -13,5 +13,6 @@ namespace LedControl
 
         public abstract TAddress[] ScanRgbLeds();
         public abstract RgbLed GetRgbLed(TAddress addr);
+        public virtual void Flush() {}
     }
 }
