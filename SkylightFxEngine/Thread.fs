@@ -34,6 +34,6 @@ let run (param: obj) =
     let handleFrame () = Scenes.SkyScene.Demo.handleFrame hub skyParam
 
     let wh = (param :?> CancellationToken).WaitHandle
-    while wh.WaitOne (handleFrame()) do
+    while not (wh.WaitOne (handleFrame())) do ()
     
     hub.Deactivate()
