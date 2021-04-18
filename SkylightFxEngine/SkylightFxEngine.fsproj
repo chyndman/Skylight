@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Common.fs" />
+    <Compile Include="Scenes\SkyScene.fs" />
     <Compile Include="Thread.fs" />
   </ItemGroup>
 

@@ -1,36 +1,39 @@
 ﻿// Copyright (c) 2021, Chris Hyndman
 // SPDX-License-Identifier: BSD-3-Clause
 
-namespace SkylightFxEngine
+module SkylightFxEngine.Thread
 
+open System
 open System.Threading
 open LedControl
 
-module Thread =
-    let run (param: obj) =
-        let hub = new Asus.AuraSyncHub()
-        hub.Activate()
+let run (param: obj) =
+    let hub = new Asus.AuraSyncHub()
+    hub.Activate()
 
-        let levels = [
-            [ (0, 2) ] 
-            [ (0, 1) ]
-            [ (0, 0) ]
-            [ (1, 4); (1, 5) ]
-            [ (1, 3); (1, 0) ]
-            [ (1, 2); (1, 1) ]
-        ]
+    let skyParam: Scenes.SkyScene.Param<int * int> =
+        { Levels =
+              [ (0, [ (0, 2) ])
+                (3, [ (0, 1) ])
+                (6, [ (0, 0) ])
+                (15, [ (1, 4); (1, 5) ])
+                (25, [ (1, 3); (1, 0) ])
+                (35, [ (1, 2); (1, 1) ]) ]
+          Swatches =
+              { Day = 170, 226, 255
+                Night = 0, 4, 20
+                Sun = 255, 241, 163 }
+          SunTimes =
+              { Dawn = new TimeSpan(5, 0, 0)
+                Sunrise = new TimeSpan(6, 0, 0)
+                Sunset = new TimeSpan(19, 0, 0)
+                Dusk = new TimeSpan(20, 0, 0) }
+          FramePeriodMsec = 250
+          GetTimeOfDay = Scenes.SkyScene.Demo.createTodCounter 15 }
 
-        let setColor color addr =
-            let led = hub.GetRgbLed(addr)
-            led.Color <- color
+    let handleFrame () = Scenes.SkyScene.Demo.handleFrame hub skyParam
 
-        let rec loop (wh: WaitHandle) iter =
-            System.Diagnostics.Debug.WriteLine("thdloop");
-            let iterNext = (iter + 1) % levels.Length
-            levels.[iter] |> List.iter (setColor (0uy, 0uy, 0uy))
-            levels.[iterNext] |> List.iter (setColor (255uy, 255uy, 255uy))
-            if (wh.WaitOne 500) then () else loop wh iterNext
-
-        loop (param :?> CancellationToken).WaitHandle 0
-        System.Diagnostics.Debug.WriteLine("thd done")
-        hub.Deactivate()
+    let wh = (param :?> CancellationToken).WaitHandle
+    while wh.WaitOne (handleFrame()) do
+    
+    hub.Deactivate()
