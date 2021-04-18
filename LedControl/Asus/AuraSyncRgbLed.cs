@@ -42,7 +42,6 @@ namespace LedControl.Asus
         protected override void SetAllChannels(byte r, byte g, byte b)
         {
             uint rgb = ((uint)r) | ((uint)g << 8) | ((uint)b << 16);
-            System.Diagnostics.Debug.WriteLine("Color set {0:X}", rgb);
             light.Color = rgb;
             dev.Apply();
         }
