@@ -27,7 +27,7 @@ type Param<'TAddress> =
       FramePeriodMsec: int
       GetTimeOfDay: unit -> TimeSpan }
 
-let private interpLin (xa, ya) (xb, yb) x =
+let private interpLin (xa, ya) (xb, yb) (x: float) =
     let dx = xb - xa
     let dy = yb - ya
     ya + (((x - xa) / dx) * dy)
@@ -38,11 +38,21 @@ let private interpLinClamp (xa, ya) (xb, yb) x =
     let xclamp = (max (min xmax x) xmin)
     interpLin (xa, ya) (xb, yb) xclamp
 
+let private ident x = x
+
+let private interpComposite (fnx: 'x -> float, fny: 'y -> float) interp (xa, ya) (xb, yb) x =
+    (interp (fnx xa, fny ya) (fnx xb, fny yb) (fnx x)): float
+
 let private interpColor interp (xa, ((ra, ga, ba): Color)) (xb, ((rb, gb, bb): Color)) x =
     let rf = interp (xa, float ra) (xb, float rb) x
     let gf = interp (xa, float ga) (xb, float gb) x
     let bf = interp (xa, float ba) (xb, float bb) x
     (int rf, int gf, int bf)
+
+let private todToFloat (tod: TimeSpan) = tod.TotalSeconds
+
+let private interpFloatByTod = interpComposite (todToFloat, ident)
+let private interpColorByTod interp = interpColor (interpFloatByTod interp)
 
 let rec private sortedMultiInterp interp xyList x =
     match xyList with
@@ -69,7 +79,7 @@ let private getSunAltitude times tod =
           (solarNoon, 90.0)
           (sunset, 0.0)
           (solarMidnightPost, -90.0) ]
-    sortedMultiInterp interpLin points tod
+    sortedMultiInterp (interpFloatByTod interpLin) points tod
 
 let private getSkyBackground (day: Color) (night: Color) times tod =
     let dawn = times.Dawn
@@ -81,10 +91,19 @@ let private getSkyBackground (day: Color) (night: Color) times tod =
           (sunrise, day)
           (sunset, day)
           (dusk, night) ]
-    sortedMultiInterp (interpColor interpLinClamp) points tod
+    sortedMultiInterp (interpColorByTod interpLinClamp) points tod
 
 let private sampleColor times swatches tod (alt: int) =
-    getSkyBackground swatches.Day swatches.Night times tod
+    let bg = getSkyBackground swatches.Day swatches.Night times tod
+    let fgSun = swatches.Sun
+    let radius = 30.0
+    let sunAlt = getSunAltitude times tod
+    System.Diagnostics.Debug.WriteLine("tod {0}:{1} -> sunAlt {2}; alt {3}", tod.Hours, tod.Minutes, sunAlt, alt)
+    let gradient =
+        [ (sunAlt - radius, bg)
+          (sunAlt, fgSun)
+          (sunAlt + radius, bg) ]
+    sortedMultiInterp (interpColor interpLinClamp) gradient (float alt)
 
 module Demo =
     let createTodCounter mstep =
