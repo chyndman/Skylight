@@ -13,23 +13,23 @@ let run (param: obj) =
 
     let skyParam: Scenes.SkyScene.Param<int * int> =
         { Levels =
-              [ (-20, [ (0, 2) ])
-                (-17, [ (0, 1) ])
-                (-14, [ (0, 0) ])
-                (-5, [ (1, 4); (1, 5) ])
-                (5, [ (1, 3); (1, 0) ])
+              [ (0, [ (0, 2) ])
+                (2, [ (0, 1) ])
+                (4, [ (0, 0) ])
+                (9, [ (1, 4); (1, 5) ])
+                (12, [ (1, 3); (1, 0) ])
                 (15, [ (1, 2); (1, 1) ]) ]
           Swatches =
               { Day = 170, 226, 255
-                Night = 0, 4, 20
-                Sun = 255, 213, 109 }
+                Night = 0, 0, 0
+                Twilight = 2, 8, 20
+                SunHigh = 255, 178, 0
+                SunLow = 209, 55, 0 }
           SunTimes =
-              { Dawn = new TimeSpan(5, 0, 0)
-                Sunrise = new TimeSpan(6, 0, 0)
-                Sunset = new TimeSpan(19, 0, 0)
-                Dusk = new TimeSpan(20, 0, 0) }
+              { Sunrise = new TimeSpan(6, 0, 0)
+                Sunset = new TimeSpan(19, 0, 0) }
           FramePeriodMsec = 250
-          GetTimeOfDay = Scenes.SkyScene.Demo.createTodCounter 15 }
+          GetTimeOfDay = Scenes.SkyScene.Demo.createTodCounter 5 }
 
     let handleFrame () = Scenes.SkyScene.Demo.handleFrame hub skyParam
 
