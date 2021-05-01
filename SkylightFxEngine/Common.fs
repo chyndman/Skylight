@@ -3,5 +3,9 @@
 
 module Common
 
+open LedControl
+
 type Color = int * int * int
-        
+
+let setLedColor (led: RgbLed) ((r, g, b): Color) =
+    led.Color <- (byte r, byte g, byte b)

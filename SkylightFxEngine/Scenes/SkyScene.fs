@@ -103,26 +103,11 @@ let private sampleColor times swatches tod angle =
           (18.0, sky) ]
     sortedMultiInterp (interpColor interpLinClamp) gradient angle
 
-module Demo =
-    let createTodCounter mstep =
-        let mutable m = 0
-        fun () ->
-            let tod = new TimeSpan(m / 60, m % 60, 0)
-            m <- (m + mstep) % (24 * 60)
-            tod
-
-    let handleFrame<'a> (hub: Hub<'a>) (param: Param<'a>) =
-        let tod = param.GetTimeOfDay()
-        System.Diagnostics.Debug.WriteLine("{0}", tod)
-        let sampleColorByAngle = sampleColor param.SunTimes param.Swatches tod
-        let setColor ((r, g, b): Color) addr =
-            let led = hub.GetRgbLed(addr)
-            led.Color <- (byte r, byte g, byte b)
-
-        let setColorByAngle = sampleColorByAngle >> setColor
-        param.Levels
-        |> List.iter (fun (angle, addrs) -> addrs |> List.iter (setColorByAngle (float angle)))
-        hub.Flush();
-        
-        param.FramePeriodMsec
-    
+let handleFrame<'a> (hub: Hub<'a>) (param: Param<'a>) =
+    let tod = param.GetTimeOfDay()
+    let setColorForAddr color addr = setLedColor (hub.GetRgbLed(addr)) color
+    param.Levels
+    |> List.map (fun (angle, addrs) -> ((sampleColor param.SunTimes param.Swatches tod (float angle)), addrs))
+    |> List.iter (fun (color, addrs) -> addrs |> List.iter (setColorForAddr color))
+    hub.Flush()
+    (15 * 1000)

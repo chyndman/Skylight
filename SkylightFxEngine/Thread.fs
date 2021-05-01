@@ -11,6 +11,11 @@ let run (param: obj) =
     let hub = new Asus.AuraSyncHub()
     hub.Activate()
 
+    let getTod () =
+        let tod = DateTime.Now.TimeOfDay
+        System.Diagnostics.Debug.WriteLine("{0}", tod)
+        tod
+
     let skyParam: Scenes.SkyScene.Param<int * int> =
         { Levels =
               [ (0, [ (0, 2) ])
@@ -28,10 +33,10 @@ let run (param: obj) =
           SunTimes =
               { Sunrise = new TimeSpan(6, 0, 0)
                 Sunset = new TimeSpan(19, 0, 0) }
-          FramePeriodMsec = 250
-          GetTimeOfDay = Scenes.SkyScene.Demo.createTodCounter 5 }
+          FramePeriodMsec = (15 * 1000)
+          GetTimeOfDay = getTod }
 
-    let handleFrame () = Scenes.SkyScene.Demo.handleFrame hub skyParam
+    let handleFrame () = Scenes.SkyScene.handleFrame hub skyParam
 
     let wh = (param :?> CancellationToken).WaitHandle
     while not (wh.WaitOne (handleFrame())) do ()
