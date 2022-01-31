@@ -5,18 +5,15 @@ module SkylightFxEngine.Thread
 
 open System
 open System.Threading
-open LedControl
+open OpenRGB.NET
 
 let run (param: obj) =
-    let hub = new Asus.AuraSyncHub()
-    hub.Activate()
-
     let getTod () =
         let tod = DateTime.Now.TimeOfDay
         System.Diagnostics.Debug.WriteLine("{0}", tod)
         tod
 
-    let skyParam: Scenes.SkyScene.Param<int * int> =
+    let skyParam: Scenes.SkyScene.Param =
         { Levels =
               [ (0, [ (0, 2) ])
                 (2, [ (0, 1) ])
@@ -36,9 +33,36 @@ let run (param: obj) =
           FramePeriodMsec = (15 * 1000)
           GetTimeOfDay = getTod }
 
-    let handleFrame () = Scenes.SkyScene.handleFrame hub skyParam
+    let devColors =
+        [
+            Array.create 5 (Models.Color());
+            Array.create 6 (Models.Color())
+        ]
+
+    let handleColorSet ((r, g, b): Common.Color, addrs: Common.LedAddress list) =
+        let updateDevColor (devColor: Models.Color) =
+            devColor.R <- (byte r)
+            devColor.G <- (byte g)
+            devColor.B <- (byte b)
+        let updateAddr (zi, di) = updateDevColor devColors.[zi].[di]
+        addrs
+        |> List.iter updateAddr
+
+    let handleFrame () =
+        let (colorSets, period) = Scenes.SkyScene.handleSceneFrame skyParam
+        colorSets
+        |> List.iter handleColorSet
+
+        try
+            let client = new OpenRGBClient()
+            devColors
+            |> List.iteri (fun zi zoneColors ->
+                client.UpdateZone(0, zi, zoneColors))
+            client.Dispose()
+        with
+            _ -> ()
+        period
+
 
     let wh = (param :?> CancellationToken).WaitHandle
     while not (wh.WaitOne (handleFrame())) do ()
-    
-    hub.Deactivate()

@@ -4,10 +4,9 @@
 module SkylightFxEngine.Scenes.SkyScene
 
 open Common
-open LedControl
 open System
 
-type Level<'TAddress> = int * ('TAddress list)
+type Level = int * (LedAddress list)
 
 type SunTimes =
     { Sunrise: TimeSpan
@@ -20,8 +19,8 @@ type Swatches =
       SunHigh: Color
       SunLow: Color }
 
-type Param<'TAddress> =
-    { Levels: Level<'TAddress> list
+type Param =
+    { Levels: Level list
       Swatches: Swatches
       SunTimes: SunTimes
       FramePeriodMsec: int
@@ -103,11 +102,10 @@ let private sampleColor times swatches tod angle =
           (18.0, sky) ]
     sortedMultiInterp (interpColor interpLinClamp) gradient angle
 
-let handleFrame<'a> (hub: Hub<'a>) (param: Param<'a>) =
+let handleSceneFrame param =
     let tod = param.GetTimeOfDay()
-    let setColorForAddr color addr = setLedColor (hub.GetRgbLed(addr)) color
-    param.Levels
-    |> List.map (fun (angle, addrs) -> ((sampleColor param.SunTimes param.Swatches tod (float angle)), addrs))
-    |> List.iter (fun (color, addrs) -> addrs |> List.iter (setColorForAddr color))
-    hub.Flush()
-    (15 * 1000)
+    let colorSets =
+        param.Levels
+        |> List.map (fun (angle, addrs) -> ((sampleColor param.SunTimes param.Swatches tod (float angle)), addrs))
+    let period = 15 * 1000
+    (colorSets, period)
